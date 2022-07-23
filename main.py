@@ -1,14 +1,25 @@
 from tkinter import *
+from tkinter import messagebox
 
 
 def save():
     websiteCreds = webEntry.get()
     euNameCreds = euNameEntry.get()
     passCreds = passEntry.get()
-    with open("data.txt", "a") as data:
-        data.write(f"{websiteCreds} | {euNameCreds} | {passCreds}\n")
-    webEntry.delete(0, END)
-    passEntry.delete(0, END)
+
+    if len(websiteCreds) == 0 or len(euNameCreds) == 0 or len(passCreds) == 0:
+        messagebox.showinfo(title="⚠ Data Input Error ⚠",
+                            message="Please make sure you haven't left any fields empty. ")
+    else:
+
+        isOk = messagebox.askokcancel(title=websiteCreds,
+                                      message=f"These are the details you entered: \nEmail/Username: {euNameCreds} \nPassword: {passCreds} \nIs it okay to save?")
+        if isOk:
+            with open("data.txt", "a") as data:
+                data.write(f"{websiteCreds} | {euNameCreds} | {passCreds}\n")
+            webEntry.delete(0, END)
+            passEntry.delete(0, END)
+
 
 window = Tk()
 window.title("Password Manager")
@@ -39,6 +50,5 @@ genPassButton = Button(text="Generate Password")
 genPassButton.grid(row=3, column=2)
 addButton = Button(text="Add", width=30, command=save)
 addButton.grid(row=4, column=1, columnspan=2)
-
 
 window.mainloop()
