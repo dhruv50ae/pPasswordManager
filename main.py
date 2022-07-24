@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
+
 
 def genPass():
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
@@ -36,17 +38,20 @@ def save():
     websiteCreds = webEntry.get()
     euNameCreds = euNameEntry.get()
     passCreds = passEntry.get()
+    newData = {websiteCreds: {
+        "euName": euNameCreds, "password": passCreds
+    }}
 
     if len(websiteCreds) == 0 or len(euNameCreds) == 0 or len(passCreds) == 0:
         messagebox.showinfo(title="⚠ Data Input Error ⚠",
                             message="Please make sure you haven't left any fields empty. ")
     else:
+        with open("data.json", "r") as dataFile:
+            data = json.load(dataFile)
+            data.update(newData)
 
-        isOk = messagebox.askokcancel(title=websiteCreds,
-                                      message=f"These are the details you entered: \nEmail/Username: {euNameCreds} \nPassword: {passCreds} \nIs it okay to save?")
-        if isOk:
-            with open("data.txt", "a") as data:
-                data.write(f"{websiteCreds} | {euNameCreds} | {passCreds}\n")
+        with open("data.json", "w") as dataFile:
+            json.dump(data, dataFile, indent=4)
             webEntry.delete(0, END)
             passEntry.delete(0, END)
 
