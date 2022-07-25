@@ -46,14 +46,37 @@ def save():
         messagebox.showinfo(title="⚠ Data Input Error ⚠",
                             message="Please make sure you haven't left any fields empty. ")
     else:
-        with open("data.json", "r") as dataFile:
-            data = json.load(dataFile)
+        try:
+            with open("data.json", "r") as dataFile:
+                data = json.load(dataFile)
+        except FileNotFoundError:
+            with open("data.json", "w") as dataFile:
+                json.dump(newData, dataFile, indent=4)
+        else:
             data.update(newData)
-
-        with open("data.json", "w") as dataFile:
-            json.dump(data, dataFile, indent=4)
+            with open("data.json", "w") as dataFile:
+                json.dump(data, dataFile, indent=4)
+        finally:
             webEntry.delete(0, END)
             passEntry.delete(0, END)
+
+
+def findPassword():
+    website = webEntry.get()
+    try:
+
+        with open("data.json") as dataFile:
+            data = json.load(dataFile)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error", message="No data file found")
+    else:
+        if website in data:
+            euName = data[website]["euName"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website, message=f"Email/Username: {euName}\nPassword: {password}")
+        else:
+            messagebox.showinfo(title="Error",
+                                message=f"You dont have any {website} logins saved\nYou need to add the logins first before searching for it.")
 
 
 window = Tk()
@@ -72,8 +95,8 @@ euNameLabel.grid(row=2, column=0)
 passLabel = Label(text="Password:")
 passLabel.grid(row=3, column=0)
 
-webEntry = Entry(width=35)
-webEntry.grid(row=1, column=1, columnspan=2)
+webEntry = Entry(width=17)
+webEntry.grid(row=1, column=1, columnspan=1)
 webEntry.focus()
 euNameEntry = Entry(width=35)
 euNameEntry.grid(row=2, column=1, columnspan=2)
@@ -81,6 +104,8 @@ euNameEntry.insert(0, "Fryost50AE")
 passEntry = Entry(width=17)
 passEntry.grid(row=3, column=1)
 
+searchButton = Button(text="Search", width=14, command=findPassword)
+searchButton.grid(row=1, column=2)
 genPassButton = Button(text="Generate Password", command=genPass)
 genPassButton.grid(row=3, column=2)
 addButton = Button(text="Add", width=30, command=save)

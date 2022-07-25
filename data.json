@@ -14,5 +14,9 @@
     "Something": {
         "euName": "Fryost50AE",
         "password": "Not something"
+    },
+    "Test1": {
+        "euName": "Fryost50AE",
+        "password": "Test3"
     }
 }
